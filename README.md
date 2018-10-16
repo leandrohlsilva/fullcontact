@@ -39,6 +39,7 @@ var FullContact = require('fullcontact');
 //
 FullContact.Location;
 FullContact.Person;
+FullContact.Enrich;
 FullContact.Email;
 FullContact.Name;
 FullContact.Company;
@@ -207,6 +208,9 @@ fullcontact.person.phone('+13037170414', function (err, data) {
   ..
 });
 ```
+
+### Enrich
+TBD
 
 ### Email
 

@@ -91,6 +91,28 @@ FullContact.prototype.process = function req(api, query, args) {
   return this.request(packet, args);
 };
 
+FullContact.prototype.v3Process = function v3Req(api, query, args) {
+  query.apiKey = query.apiKey || this.key;
+
+  const body = {
+    email: query.email,
+    twitter: query.twitter,
+    fullName: query.fullName,
+    emailHash: query.emailHash,
+    phone: query.phone,
+  };
+  const packet = {
+    method: 'POST',
+    uri: args.endpoint || api.endpoint,
+    headers: {
+      Authorization: `Bearer ${query.apiKey}`
+    },
+    body: JSON.stringify(body),
+  };
+
+  return this.request(packet, args);
+};
+
 /**
  * Send a GET request to the FullContact servers using given packet.
  *
@@ -126,7 +148,7 @@ FullContact.prototype.request = function req(packet, args) {
     // it will have a "message" property when it's a failed request so we can
     // leverage that to return a nice error.
     //
-    if (body.status !== 200 && body.status !== 202) {
+    if (res.statusCode !== 200 && res.statusCode !== 202) {
       err = new Error(body.message);
       err.status = body.status;
 
@@ -279,6 +301,7 @@ FullContact.createClient = function createClient(api) {
 //
 FullContact.Location = require('./endpoints/location');
 FullContact.Person = require('./endpoints/person');
+FullContact.Enrich = require('./endpoints/enrich');
 FullContact.Email = require('./endpoints/email');
 FullContact.Name = require('./endpoints/name');
 FullContact.Company = require('./endpoints/company');
@@ -297,6 +320,10 @@ FullContact.define(FullContact.prototype, 'email', function define() {
 
 FullContact.define(FullContact.prototype, 'person', function define() {
   return new FullContact.Person(this);
+});
+
+FullContact.define(FullContact.prototype, 'enrich', function define() {
+  return new FullContact.Enrich(this);
 });
 
 FullContact.define(FullContact.prototype, 'name', function define() {
